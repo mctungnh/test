@@ -1,0 +1,141 @@
+// Code Global.ascx.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Http;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
+
+namespace BanHangOnline
+{
+// Note: For instructions on enabling IIS6 or IIS7 classic mode, 
+// visit http://go.microsoft.com/?LinkId=9394801
+
+public class WebApiApplication : System.Web.HttpApplication
+{
+protected void Application_Start()
+{
+AreaRegistration.RegisterAllAreas();
+
+WebApiConfig.Register(GlobalConfiguration.Configuration);
+FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+RouteConfig.RegisterRoutes(RouteTable.Routes);
+BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+ADOController.DataPath = System.Web.HttpContext.Current.Server.MapPath("/app_data");
+}
+}
+} 
+
+// Code LoginController
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Http;
+using System.Net;
+using System.Net.Http;
+
+
+namespace BanHangOnline.API
+{
+public class LoginRequest
+{
+public string Name { get; set; }
+public string Pass { get; set; }
+}
+public class LoginResponse
+{
+public long Code { get; set; }
+public string Message { get; set; }
+public string Data { get; set; }
+public object Value { get; set; }
+}
+public class LoginController : ApiController
+{
+Dictionary<string, string> _accountMap;
+
+[HttpPost]
+public LoginResponse Post([FromBody] LoginRequest request)
+{
+if (_accountMap == null)
+{
+_accountMap = new Dictionary<string, string>();
+var table = ADOController.CreateTable("User");
+table.Columns.Add("Id", typeof(int));
+table.Columns.Add("Name");
+table.Columns.Add("Pass");
+
+ADOController.LoadData(table);
+
+foreach (System.Data.DataRow r in table.Rows)
+{
+_accountMap.Add(r["Name"].ToString(), r["Pass"].ToString());
+}
+}
+// kiem tra username
+string pass;
+if (_accountMap.TryGetValue(request.Name.ToLower(), out pass) == false)
+return new LoginResponse { Message = "User not found" };
+
+// kiem tra password
+if (pass != request.Pass)
+return new LoginResponse { Message = "Password invalid" };
+
+return new LoginResponse { Code = 1 };
+}
+}
+
+}
+
+// Code ADOController
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+
+namespace BanHangOnline
+{
+public class ADOController
+{
+static public string DataPath { get; set; }
+
+static DataSet _ds;
+public static DataSet Data
+{
+get
+{
+if (_ds == null)
+_ds = new DataSet();
+return _ds;
+}
+}
+public static DataTable CreateTable(string name)
+{
+var table = new DataTable { TableName = name };
+Data.Tables.Add(table);
+return table;
+}
+public static void LoadData(DataTable table)
+{
+try
+{
+string name = table.TableName;
+table.ReadXml(DataPath + "/" + name + ".xml");
+}
+catch (Exception e)
+{
+}
+}
+
+public static void LoadData(string name)
+{
+LoadData(Data.Tables[name]);
+}
+}
+
+} 
