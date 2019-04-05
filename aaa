@@ -1,0 +1,285 @@
+<pages menu="Hệ thống BKS">
+
+  <common>
+
+    <login menu="Đăng nhập" href="/account/login" max-level="1" />
+
+  </common>
+
+  <account menu="Tài khoản" level="10">
+
+    <login menu="Đăng nhập" caption="ĐĂNG NHẬP" sub-caption="Hệ thống thiết bị thông minh BKS" level="0" max-level="1" model="User" gui="login" />
+
+    <logout menu="Đăng xuất" model="User" />
+
+    <mat-khau menu="Đổi mật khẩu" gui="change-pass" />
+
+  </account>
+
+  <admin menu="Hệ thống" level="99" secured="1">
+
+    <data menu="Quản lý dữ liệu">
+
+      <user menu="Danh sách người dùng" model="User" gui="user" search="Name" />
+
+      <author menu="Phân quyền" sort="Id desc" search="Description" import="author"/>
+
+      <select menu="Select Data" />
+
+    </data>
+
+    <temp caption="Cập nhật template" menu="Template" action="/">
+
+      <reload menu="Reload" />
+
+      <sitemap menu="Site Map" />
+
+      <models menu="Models" />
+
+      <guis menu="Guis" />
+
+      <text menu="Text" model="TextTemplate" gui="templatetext" search="Key" sort="Key" />
+
+    </temp>
+
+  </admin>
+
+ 
+
+  <partner menu="Partner">
+
+    <list model="Partner" menu="List" />
+
+  </partner>
+
+</pages>
+
+ 
+
+<models>
+
+  <default>
+
+    <Id data-type="Int32" primary-key="1" identity="1" />
+
+    <AuthorId reference="Author.Id" />
+
+    <Ma primary-key="1" />
+
+    <Ngay data-type="DateTime" />
+
+    <NgayCap data-type="DateTime" />
+
+    <NgaySinh data-type="DateTime" />
+
+    <SoLuong data-type="Int32" />
+
+    <ThietBiId reference="ThietBi.Id" />
+
+    <UserId reference="User.Id" data-type="Int32" />
+
+    <KhachHangId reference="KhachHang.UserId" />
+
+  </default>
+
+ 
+
+  <System group="1">
+
+    <default />
+
+    <Author>
+
+      <Id identity="0" default-value="0" />
+
+      <Description />
+
+      <Site />
+
+      <FHD />
+
+      <DefaultPassword />
+
+    </Author>
+
+    <User>
+
+      <Id />
+
+      <Name />
+
+      <Pass />
+
+      <FullName />
+
+      <Email />
+
+      <Tel />
+
+      <AuthorId reference="Author.Id" />
+
+    </User>
+
+    <TextTemplate>
+
+      <Key primary-key="1" />
+
+      <Value />
+
+      <Viet />
+
+    </TextTemplate>
+
+  </System>
+
+  <Project group="1">
+
+    <default></default>
+
+  </Project>
+
+</models>
+
+ 
+
+<guis>
+
+  <default>
+
+    <Id visible="0" primary-key="1" />
+
+    <DongId caption="Dòng" input="ComboBox" data-source="DongTB" value-member="Id" display-member="Ten" />
+
+    <GhiChu caption="Ghi chú" req="0" />
+
+    <GioiTinh caption="Giới tính" input="ComboBox" data-source="GioiTinh" display-member="Viet" value-member="Id" />
+
+    <HoTen caption="Họ tên" input="TenBox" />
+
+    <Ma caption="Mã" primary-key="1" />
+
+    <Ngay caption="Ngày" data-type="DateTime" format-string="dd/MM/yyyy" input="DateBox" placeholder="d m yy" />
+
+    <NgaySinh inherits="/Ngay" caption="Ngày sinh" />
+
+    <Pass caption="Mật khẩu" input="PasswordBox" visible="2" />
+
+    <Confirm caption="Xác nhận" />
+
+    <Ten caption="Tên" />
+
+    <SoLuong caption="Số lượng" />
+
+    <User.FullName caption="Tên người dùng" />
+
+  </default>
+
+  <system group="1">
+
+    <default />
+
+    <author>
+
+      <Id caption="Level" visible="3" />
+
+      <Description />
+
+      <Site caption="Start site address" import-name="Site" />
+
+    </author>
+
+    <user>
+
+      <Name />
+
+      <User.FullName />
+
+      <User.AuthorId input="ComboBox" data-source="Author" value-member="Id" display-member="Description" />
+
+    </user>
+
+    <change-pass>
+
+      <Pass />
+
+      <Confirm />
+
+    </change-pass>
+
+    <login>
+
+      <Name caption="Tên người dùng" />
+
+      <Pass />
+
+      <Check caption="Duy trì đăng nhập" input="CheckBox" />
+
+    </login>
+
+    <DataSelect>
+
+      <Select />
+
+      <From />
+
+      <Where req="0" />
+
+      <OrderBy req="0" />
+
+    </DataSelect>
+
+ 
+
+    <template group="1" join="before">
+
+      <default />
+
+      <sitemap>
+
+        <caption req="0" />
+
+        <model req="0" width="half" />
+
+        <gui req="0" width="half" />
+
+      </sitemap>
+
+      <models>
+
+        <name />
+
+        <dataType />
+
+        <primaryKey />
+
+        <identity />
+
+      </models>
+
+      <guis>
+
+        <name />
+
+        <caption />
+
+        <input />
+
+        <req />
+
+      </guis>
+
+      <Text>
+
+        <Key />
+
+        <Viet />
+
+        <Value req="0" />
+
+      </Text>
+
+    </template>
+
+  </system>
+
+</guis>
